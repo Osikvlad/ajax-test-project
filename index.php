@@ -38,22 +38,34 @@ function getArticles($pageNum)
     if ($pageNum == '') {
         $pageNum = 1;
     }
-    curl_setopt_array($curl, array(
-        CURLOPT_URL => "http://newsapi.org/v2/everything?q=Linux&language=en&sortBy=publishedAt&apiKey=6e6d9f7d53644208b1e46ea7b7a47eab&pageSize=30&page=" . $pageNum,
-        CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_TIMEOUT => 30,
-        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-        CURLOPT_CUSTOMREQUEST => "GET",
-        CURLOPT_HTTPHEADER => array(
-            "cache-control: no-cache"
-        ),
-    ));
 
-    $response = curl_exec($curl);
-    $err = curl_error($curl);
-    curl_close($curl);
-    $response = json_decode($response, true);
-    return $response['articles'];
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => "http://newsapi.org/v2/everything?q=Linux&language=en&sortBy=publishedAt&apiKey=6e6d9f7d53644208b1e46ea7b7a47eab&pageSize=30&page=" . $pageNum,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_TIMEOUT => 30,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => "GET",
+            CURLOPT_HTTPHEADER => array(
+                "cache-control: no-cache"
+            ),
+        ));
+
+        $response = curl_exec($curl);
+        $err = curl_error($curl);
+        if ($err){
+            var_dump($err); exit;
+        }
+        curl_close($curl);
+        $response = json_decode($response, true);
+        if (isset($response['articles'])){
+            return $response['articles'];
+        } else {
+            echo 'На данной странице нет статей, перейдите на страницу 1'.'<form method="post" action="index.php">
+                <input class="page-num" name="1" type="submit" value="1"/>
+            </form>'; exit;
+        }
+
+
 }
 ?>
 <div class="container text-center">
